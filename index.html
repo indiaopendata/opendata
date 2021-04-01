@@ -1,0 +1,120 @@
+
+
+<!doctype html>
+<html lang="en"
+      dir="ltr">
+  <head>
+    <title>Google Developers</title>
+    <meta name="robots" content="noindex">
+    <meta charset="utf-8">
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    
+      <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Google+Sans:400,500|Roboto:400,400italic,500,500italic,700,700italic|Roboto+Mono:400,500,700|Material+Icons">
+      <link rel="stylesheet" href="https://www.gstatic.com/devrel-devsite/prod/va86e410c3836eceeddcebcf4b4d8ca612c34448e39d45400c1d2761bf99aed92/developers/css/app.css">
+   
+    
+  </head>
+  
+  <body style="height: auto; overflow: hidden; padding: 20px;">
+    <meta name="auto_height" content="true" /><meta name="auto_width" content="true" />
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+   <div id="chart_div" style="padding-top: 15px; height: 80%"></div>
+      <div id="chart_div2" style="padding-top: 15px; height: 80%"></div>
+
+
+<script type="text/javascript">
+  google.charts.load('current', {'packages':['corechart', 'table', 'gauge', 'controls']});
+  //google.charts.setOnLoadCallback(drawMainDashboard);
+
+  google.charts.setOnLoadCallback(loadDashboardData);
+  
+  function loadDashboardData(){
+   var query = new google.visualization.Query(
+        'https://docs.google.com/spreadsheets/d/1iXkM1LeSWLPqXTMZSz5T924s7uroLVWMvOI1JK8k2ks/gviz/tq?sheet=latest&headers=1&tq=&range=');
+
+    // Apply query language statement.
+    query.setQuery('SELECT B,G');
+    
+    // Send the query with a callback function.
+    query.send(handleQueryResponse);
+  
+  }
+  
+  function handleQueryResponse(response) {
+    if (response.isError()) {
+      alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+      return;
+    }
+
+    var data = response.getDataTable();
+	
+	var view = new google.visualization.DataView(data);
+	
+	var totalColumns = data.getNumberOfColumns();
+	
+	var columns = [];
+for (var i = 0; i < totalColumns ; i++) {
+    if (i > 0) {
+        columns.push(i);
+        columns.push({
+            calc: "stringify",
+            sourceColumn: 1,
+            type: "string",
+            role: "annotation"
+        });
+
+    } else {
+        columns.push(i);
+    }
+}
+
+view.setColumns(columns);
+   
+ var paddingHeight = 40;
+        var rowHeight = data.getNumberOfRows() * 15;
+        var chartHeight = rowHeight + paddingHeight;
+		
+      var options = {
+        title: 'Percentage of Total Doses/Population',
+        height: chartHeight,
+            chartArea: {
+              height: rowHeight,
+			  width: '50%',
+            },
+        colors: ['#b0120a', '#ffab91'],
+		displayAnnotations: true,
+		annotations: {
+              textStyle: {
+                 fontSize: 12,
+                 bold: true,
+				 color: 'black',
+              },
+           },
+        hAxis: {
+          title: 'Percentage',
+          minValue: 0
+        },
+        vAxis: {
+          title: 'State/UT',
+          textStyle : {
+            fontSize: 12 // or the number you want
+          }		  
+        }
+      };
+      var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+      chart.draw(view, options);
+	
+
+
+  }
+  
+</script>
+
+
+  </body>
+</html>
